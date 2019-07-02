@@ -1,0 +1,25 @@
+The following package uses an algorithm to solve any randomly generated maze.
+
+Currently I have one file (maze_solver) that does everything.  It obtains the maze, instantiantes the algorithm and runs
+it until the 'player' has reached the end of the maze.  It then submits the path the player took to obtain the results.
+
+Ideal Structure:
+I think it would be best to use a MVC design.  It would go as follows:
+
+Model - Contains a Player class and the algorithm
+View - Uses PyGame to create a visual of the maze and shows the player moving throughout it
+Controller - Lets the model and view interact.  Also, obtains the data from the api then submit the result.
+
+
+Model structure:
+Class Player: the 'player' in the maze
+Class Maze: Holds the maze layout
+Class MazeSolver: Contains the algorithm for the player moving throughout the maze
+
+View structure:
+Class Display: Creates the display for the animation (I decided to use PyGame since I didn't know what else could work)
+
+Controller:
+Holds a main function that will obtain the maze data, create an instance of all the classes from Model and View, and will
+run the visualization.
+

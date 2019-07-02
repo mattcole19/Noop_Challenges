@@ -1,6 +1,7 @@
 import requests
 import json
 from collections import namedtuple
+from mazebot.view import Screen
 
 
 Position = namedtuple('Position', ['x', 'y'])
@@ -75,7 +76,6 @@ class Maze:
             # If there are no possible movements, the player must go back to the last spot that a choice was made
             self.revert_to_checkpoint()
 
-    # TODO: Possibly optimize this
     def determine_optimal_movement(self, possible_directions):
         """
         Determines what move will put the player closest to the end point (greedy algorithm)
@@ -165,7 +165,7 @@ class Maze:
     def get_path(self):
         return self.path
 
-print('change')
+
 def main():
     # GET request
     geturl = 'https://api.noopschallenge.com/mazebot/random'
@@ -176,6 +176,9 @@ def main():
     dimensions = len(layout[0]) - 1
     start = data['startingPosition']
     end = data['endingPosition']
+
+    screen = Screen(maze_layout=layout, maze_dimensions=dimensions)
+    screen.create_grid()
 
     # Start and End positions of the maze
     start = Position(x=start[0], y=start[1])
@@ -209,7 +212,6 @@ def main():
 
     # Result...
     print(result.content)
-
 
 if __name__ == '__main__':
     main()
