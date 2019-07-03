@@ -1,5 +1,6 @@
 import arcade
 
+
 class Screen:
     screen_width = 700
     screen_height = 700
@@ -15,8 +16,6 @@ class Screen:
 
     def create_grid(self):
         """ Creates the grid for the maze """
-        for row in self.layout:
-            print(row)
         y = self.screen_height
         for row in self.layout:
             x = 0
@@ -39,12 +38,12 @@ class Screen:
                                                       height=self.y_change, color=arcade.color.BLUE)
                 x += self.x_change
             y -= self.y_change
-
         arcade.finish_render()
-        arcade.run()
 
     def update_screen(self):
         """ Renders the new screen """
         pass
 
+    def run(self):
+        arcade.run()
 

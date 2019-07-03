@@ -113,6 +113,7 @@ class Maze:
         self.layout[self.player_position.y][self.player_position.x] = "V"
 
         # Get the coordinates of the last "checkpoint" (the last decision)
+        # TODO: Fix pop from empty list
         last_checkpoint = self.checkpoints.pop()
         print(f'Reverting to checkpoint at {last_checkpoint}')
 
@@ -166,6 +167,24 @@ class Maze:
         return self.path
 
 
+# class Mazes:
+#     def __init__(self, layout, dimensions, start, end):
+#         self.layout = layout
+#         self.dimensions = dimensions
+#         self.start = start
+#         self.end = end
+#
+#
+# class Player:
+#     def __init__(self, position):
+#         self.position = position
+#         pass
+#
+#     def
+
+
+
+
 def main():
     # GET request
     geturl = 'https://api.noopschallenge.com/mazebot/random'
@@ -212,6 +231,3 @@ def main():
 
     # Result...
     print(result.content)
-
-if __name__ == '__main__':
-    main()
