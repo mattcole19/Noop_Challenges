@@ -13,6 +13,10 @@ class Screen:
         self.layout = maze_layout
         self.x_change = self.screen_width / (maze_dimensions + 1)
         self.y_change = self.screen_height / (maze_dimensions + 1)
+        self.size_ratio = .5
+        self.player_width = self.x_change * self.size_ratio
+        self.player_height = self.y_change * self.size_ratio
+
 
     def create_grid(self):
         """ Creates the grid for the maze """
@@ -31,6 +35,8 @@ class Screen:
                     arcade.draw_xywh_rectangle_filled(bottom_left_x=x, bottom_left_y=y - self.y_change,
                                                       width=self.x_change,
                                                       height=self.y_change, color=arcade.color.GREEN)
+                    self.draw_player(x, y)
+
                 # Place the end gate
                 if value == 'B':
                     arcade.draw_xywh_rectangle_filled(bottom_left_x=x, bottom_left_y=y - self.y_change,
@@ -44,6 +50,21 @@ class Screen:
         """ Renders the new screen """
         pass
 
-    def run(self):
+    def draw_player(self, x, y):
+        """
+        Draws the player onto the screen
+        :param x: float - bottom left x of the square
+        :param y: float - bottom left y of the square
+        :return:
+        """
+        # Adjusts the player to the middle of the square
+        x += self.size_ratio * self.player_width
+        y += self.size_ratio * self.player_height
+
+        arcade.draw_xywh_rectangle_filled(bottom_left_x=x, bottom_left_y=y - self.y_change, width=self.player_width,
+                                          height=self.player_height, color=arcade.color.ORANGE)
+
+    @staticmethod
+    def run():
         arcade.run()
 
