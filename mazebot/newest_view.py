@@ -12,18 +12,16 @@ import os
 
 
 dirname = os.path.dirname(__file__)
-print(dirname)
 filename = dirname + '/images/blue_ghost.png'
-print(filename)
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 700
+SCREEN_HEIGHT = 700
 SCREEN_TITLE = "Starting Template"
 
 
-class MyGame(arcade.Window):
+class Visualization(arcade.Window):
 
-    def __init__(self):
+    def __init__(self, layout, dimensions):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
         # Will hold player Sprite
@@ -32,16 +30,23 @@ class MyGame(arcade.Window):
         # Player sprite
         self.player_sprite = None
 
+        # Maze layout
+        self.layout = layout
+        self.dimensions = dimensions
+
+        # Size of each block in the grid system
+        self.y_change = SCREEN_HEIGHT / (self.dimensions + 1)
+        self.x_change = SCREEN_WIDTH / (self.dimensions + 1)
+
         arcade.set_background_color(arcade.color.AMAZON)
 
     def setup(self):
         # Create your sprites and sprite lists here
-
         self.player_list = arcade.SpriteList()
-
 
         # Player sprite
         self.player_sprite = arcade.Sprite(filename)
+
         self.player_sprite.center_x = 50
         self.player_sprite.center_y = 50
         self.player_list.append(self.player_sprite)
@@ -50,10 +55,10 @@ class MyGame(arcade.Window):
         """
         Render the screen.
         """
-
         # This command should happen before we start drawing. It will clear
         # the screen to the background color, and erase what we drew last frame.
         arcade.start_render()
+        self.create_grid()
         self.player_list.draw()
 
         # Call draw() on all your sprite lists below
@@ -66,13 +71,39 @@ class MyGame(arcade.Window):
         """
         pass
 
+    def create_grid(self):
+        """ Creates the grid for the maze """
+        y = SCREEN_HEIGHT
+        for row in self.layout:
+            x = 0
+            for value in row:
 
-def main():
-    """ Main method """
-    window = MyGame()
-    window.setup()
-    arcade.run()
+                # Place a wall
+                if value == 'X':
+                    arcade.draw_xywh_rectangle_filled(bottom_left_x=x, bottom_left_y=y - self.y_change,
+                                                      width=self.x_change,
+                                                      height=self.y_change, color=arcade.color.BLACK)
+                # Place the player
+                if value == 'A':
+                    arcade.draw_xywh_rectangle_filled(bottom_left_x=x, bottom_left_y=y - self.y_change,
+                                                      width=self.x_change,
+                                                      height=self.y_change, color=arcade.color.GREEN)
+                    # if self.player_position is None:
+                    #     self.player_position = [x, y]
+                    #     arcade.draw_xywh_rectangle_filled(bottom_left_x=self.player_position[0],
+                    #                                       bottom_left_y=self.player_position[1], width=self.x_change,
+                    #                                       height=self.y_change, color=arcade.color.ORANGE)
 
-if __name__ == "__main__":
-    main()
+                # Place the end gate
+                if value == 'B':
+                    arcade.draw_xywh_rectangle_filled(bottom_left_x=x, bottom_left_y=y - self.y_change,
+                                                      width=self.x_change,
+                                                      height=self.y_change, color=arcade.color.BLUE)
+                x += self.x_change
+            y -= self.y_change
+
+    @staticmethod
+    def run():
+        arcade.run()
+
 
