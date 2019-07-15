@@ -29,6 +29,7 @@ class Visualization(arcade.Window):
 
         # Player sprite
         self.player_sprite = None
+        self.player_position = None
 
         # Maze layout
         self.layout = layout
@@ -47,8 +48,11 @@ class Visualization(arcade.Window):
         # Player sprite
         self.player_sprite = arcade.Sprite(filename)
 
-        self.player_sprite.center_x = 50
-        self.player_sprite.center_y = 50
+        # Initialize maze
+        self.create_grid()
+
+        self.player_sprite.center_x = self.player_position[0]
+        self.player_sprite.center_y = self.player_position[1]
         self.player_list.append(self.player_sprite)
 
     def on_draw(self):
@@ -88,11 +92,9 @@ class Visualization(arcade.Window):
                     arcade.draw_xywh_rectangle_filled(bottom_left_x=x, bottom_left_y=y - self.y_change,
                                                       width=self.x_change,
                                                       height=self.y_change, color=arcade.color.GREEN)
-                    # if self.player_position is None:
-                    #     self.player_position = [x, y]
-                    #     arcade.draw_xywh_rectangle_filled(bottom_left_x=self.player_position[0],
-                    #                                       bottom_left_y=self.player_position[1], width=self.x_change,
-                    #                                       height=self.y_change, color=arcade.color.ORANGE)
+                    if self.player_position is None:
+                        self.player_position = [x + .5*self.x_change, y - .5*self.y_change]
+
 
                 # Place the end gate
                 if value == 'B':
