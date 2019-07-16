@@ -1,10 +1,9 @@
 import requests
 import json
-import time
 from copy import deepcopy
 from collections import namedtuple
 from mazebot.model import Maze
-from mazebot.newest_view import Visualization
+from mazebot.view import Visualization
 
 Position = namedtuple('Position', ['x', 'y'])
 
@@ -12,7 +11,7 @@ Position = namedtuple('Position', ['x', 'y'])
 def run():
 
     # Request data from API
-    max_size = '10' # input("Enter the max dimensions of the maze")
+    max_size = input("Enter the max dimensions of the maze")
     geturl = 'https://api.noopschallenge.com/mazebot/random?maxSize=' + max_size
     data = requests.get(url=geturl).json()
 
@@ -58,7 +57,7 @@ def run():
     print(result.content)
 
     # Screen Instance to show the animation
-    visualization = Visualization(layout=layout_copy, dimensions=dimensions)
+    visualization = Visualization(layout=layout_copy, dimensions=dimensions, path=path)
     visualization.setup()
     visualization.run()
     #screen.on_draw()

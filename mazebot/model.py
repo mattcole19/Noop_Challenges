@@ -1,7 +1,7 @@
 import requests
 import json
 from collections import namedtuple
-from mazebot.view import Screen
+#from mazebot.view import Screen
 
 
 Position = namedtuple('Position', ['x', 'y'])
