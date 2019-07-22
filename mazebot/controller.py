@@ -1,18 +1,28 @@
 import requests
 import json
+from tkinter import *
 from copy import deepcopy
 from collections import namedtuple
+from mazebot.simpler_GUI import UserInterface
 from mazebot.model import Maze
+root = Tk()  # FOR SOME REASON THIS HAS TO BE ABOVE IMPORTING VISUALIZATION (CRASHES OTHERWISE)
 from mazebot.view import Visualization
+
 
 Position = namedtuple('Position', ['x', 'y'])
 
 
 def run():
 
+    # User interface
+    ui = UserInterface(root)
+    root.mainloop()
+    print(ui.min_value)
+
     # Request data from API
-    max_size = input("Enter the max dimensions of the maze")
-    geturl = 'https://api.noopschallenge.com/mazebot/random?maxSize=' + max_size
+    max_size = ui.max_value
+    min_size = ui.min_value
+    geturl = f'https://api.noopschallenge.com/mazebot/random?minSize={str(min_size)}&maxSize={str(max_size)}'
     data = requests.get(url=geturl).json()
 
     # Stores data for the maze
@@ -54,7 +64,10 @@ def run():
     result = requests.post(url=post_url, data=json.dumps(answer))
 
     # Result...
+    print(dimensions)
     print(result.content)
+
+
 
     # Screen Instance to show the animation
     visualization = Visualization(layout=layout_copy, dimensions=dimensions, path=path)
@@ -66,8 +79,6 @@ def run():
     # Creates the grid
 
     # Moves the player on the screen
-
-
 
 if __name__ == '__main__':
     run()

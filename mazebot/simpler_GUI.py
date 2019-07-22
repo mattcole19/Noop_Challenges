@@ -11,7 +11,8 @@ class UserInterface(Frame):
         # Variables that will be needed by the maze
         self.min_value = 0
         self.max_value = 100
-        self.paths = []
+        self.show_full_path = False
+        self.show_condensed_path = False
 
         # Window Title
         self.master.title('Maze Solver')
@@ -34,10 +35,12 @@ class UserInterface(Frame):
         self.path_label = Label(master=master, text='Choose which paths you would like to see')
         self.path_label.pack()
 
-        self.condensed_path = Checkbutton(master=master, text='Condensed Path')
+        self.condensed = IntVar()
+        self.condensed_path = Checkbutton(master=master, text='Condensed Path', variable=self.condensed)
         self.condensed_path.pack()
 
-        self.full_path = Checkbutton(master=master, text='Full Path')
+        self.full = IntVar()
+        self.full_path = Checkbutton(master=master, text='Full Path', variable=self.full)
         self.full_path.pack()
 
         # Start button
@@ -52,5 +55,11 @@ class UserInterface(Frame):
         self.min_value = self.min_slider.get()
         self.max_value = self.max_slider.get()
 
-        self.
+        if self.condensed.get():
+            self.show_condensed_path = True
+        if self.full.get():
+            self.show_full_path = True
+
+        self.master.destroy()
+
         print('button pressed')

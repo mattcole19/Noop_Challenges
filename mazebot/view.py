@@ -77,8 +77,7 @@ class Visualization(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
-        print(delta_time)
-        time.sleep(.5)
+        #time.sleep(.2)
         if self.path:
             self.move_player()
 
