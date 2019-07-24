@@ -1,13 +1,12 @@
 import requests
 import json
 from collections import namedtuple
-#from mazebot.view import Screen
 
-
+# This makes dealing with the x, y coordinates easier
 Position = namedtuple('Position', ['x', 'y'])
 
 
-class Maze:
+class MazeSolver:
     def __init__(self, layout, start, end, dimensions):
         self.layout = layout
         self.start = start
@@ -15,39 +14,15 @@ class Maze:
         self.end = end
         self.dimensions = dimensions
         self.checkpoints = [start]
-        self.path = []
-        self.checkpoint_paths = {self.start: self.path}
-
-    def move_player(self, movement):
-        """
-        Moves the player in the desired direction
-        :param movement: list: [direction, coordinates, distance from exit]
-        :return:
-        """
-        direction = movement[0]
-        x = movement[1].x
-        y = movement[1].y
-
-        print(f'Moving player {direction}')
-        self.layout[self.player_position.y][self.player_position.x] = "V"
-
-        self.player_position = Position(x=x, y=y)
-
-        self.layout[y][x] = 'P'
-        self.path.append(direction)
-        return
+        self.optimal_path = []
+        self.full_path = []
+        self.checkpoint_paths = {self.start: self.optimal_path}
 
     def check_possible_movements(self):
         """
-        Checks to see what ways the player can move
+        Checks to see what ways the player can move (N, E, S, W)
         :return:
         """
-        print()
-        self.display_maze()
-        print(f'Current Path: {self.get_path()}')
-        print(f'Current Checkpoints: {self.checkpoints}')
-        print(f'Path index: {len(self.path) - 1}')
-
         possible_movements = []
         restricted_spaces = ['X', 'V']  # X = Wall, V = Visited
 
@@ -68,54 +43,76 @@ class Maze:
             if self.layout[self.player_position.y][self.player_position.x - 1] not in restricted_spaces:
                 possible_movements.append('W')
 
-        print(f'Player can move in the following directions: {possible_movements}')
-
         if possible_movements:
             self.determine_optimal_movement(possible_directions=possible_movements)
         else:
             # If there are no possible movements, the player must go back to the last spot that a choice was made
             self.revert_to_checkpoint()
 
+        return
+
     def determine_optimal_movement(self, possible_directions):
         """
-        Determines what move will put the player closest to the end point (greedy algorithm)
+        Determines what move will put the player closest to the end point (greedy algorithm implementation)
         :param possible_directions: list - all open directions (N, E, S, W)
-        :return:
+        :return: none
         """
         possible_spaces = []
 
-        # Creates list of possible movements that includes: direction, the point on the board, distance from exit,
+        # Creates list of possible movements that includes: [direction, the point on the board, distance from exit]
         for direction in possible_directions:
             space = self.calculate_point(direction=direction)
             distance_from_exit = self.distance_formula(point=space)
             possible_space = [direction, space, distance_from_exit]
             possible_spaces.append(possible_space)
 
+        # Sets the optimal movement to the space closest to the exit
         possible_spaces.sort(key=lambda x: x[2])
         optimal_movement = possible_spaces[0]
 
-        # If the player has a choice to make, set the current point as a checkpoint
+        # If the player has a choice to make, sets the current point as a checkpoint
         if len(possible_spaces) > 1:
             checkpoint = self.player_position
-            path_copy = self.path.copy()
+            path_copy = self.optimal_path.copy()
             self.checkpoints.append(checkpoint)
             self.checkpoint_paths[checkpoint] = path_copy
 
         self.move_player(optimal_movement)
+
+        return
+
+    def move_player(self, movement):
+        """
+        Moves the player in the desired direction
+        :param movement: list: [direction, coordinates, distance from exit]
+        :return:
+        """
+        # x and y coordinates of where the player is moving to
+        x = movement[1].x
+        y = movement[1].y
+
+        self.layout[self.player_position.y][self.player_position.x] = "V"
+
+        self.player_position = Position(x=x, y=y)
+
+        self.layout[y][x] = 'P'
+
+        direction = movement[0]
+        self.optimal_path.append(direction)
+        self.full_path.append(direction)
+
         return
 
     def revert_to_checkpoint(self):
         """
         Reverts the player back to where they had a decision on which way to go
-        :return:
+        :return: none
         """
         # Set current position to visited
         self.layout[self.player_position.y][self.player_position.x] = "V"
 
         # Get the coordinates of the last "checkpoint" (the last decision)
-        # TODO: Fix pop from empty list
         last_checkpoint = self.checkpoints.pop()
-        print(f'Reverting to checkpoint at {last_checkpoint}')
 
         # Move the player to the last checkpoint
         self.player_position = last_checkpoint
@@ -123,68 +120,65 @@ class Maze:
 
         # Revert path to last checkpoint's path
         print(self.checkpoint_paths)
-        self.path = self.checkpoint_paths[last_checkpoint]
+        self.optimal_path = self.checkpoint_paths[last_checkpoint]
 
         # Recheck the possible movements
         self.check_possible_movements()
+
         return
 
     def display_maze(self):
         """
         Displays maze
-        :return:
+        :return: none
         """
         for row in self.layout:
             print(row)
 
+        return
+
     def distance_formula(self, point):
         """
         Calculates distance between a point and the end
-        :param point: Position - x, y coordinates of space in maze
-        :return: float - distance from the point to the end
+        :param point: Position - (x, y) coordinates of space in maze
+        :return: distanct: float - distance from the point to the end
         """
         distance = (((point.x - self.end.x)**2) + (point.y - self.end.y)**2)**.5
+
         return distance
 
     def calculate_point(self, direction):
         """
         Determines the x,y cooridates of the new point based on the direction the player moves
-        :param direction: String - direciton in which player is moving
-        :return:
+        :param direction: String - direction in which player is moving
+        :return: point: Position - the (x, y) coordinates of where the player is moving to
         """
         if direction == 'N':
             point = Position(x=self.player_position.x, y=self.player_position.y - 1)
-        if direction == 'E':
+        elif direction == 'E':
             point = Position(x=self.player_position.x + 1, y=self.player_position.y)
-        if direction == 'S':
+        elif direction == 'S':
             point = Position(x=self.player_position.x, y=self.player_position.y + 1)
-        if direction == 'W':
+        else:
             point = Position(x=self.player_position.x - 1, y=self.player_position.y)
 
         return point
 
-    def get_path(self):
-        return self.path
+    def get_optimal_path(self):
+        """
+        Getter for optimal path
+        :return: self.optimal_path: list - the 'ideal' path to take
+        """
+        return self.optimal_path
 
+    def get_full_path(self):
+        """
+        Getter for full path
+        :return: self.full_path: list - every movement that the player took to find the exit
+        """
+        return self.full_path
 
-# class Mazes:
-#     def __init__(self, layout, dimensions, start, end):
-#         self.layout = layout
-#         self.dimensions = dimensions
-#         self.start = start
-#         self.end = end
-#
-#
-# class Player:
-#     def __init__(self, position):
-#         self.position = position
-#         pass
-#
-#     def
-
-
-
-
+'''
 def main():
     # GET request
     geturl = 'https://api.noopschallenge.com/mazebot/random'
@@ -195,9 +189,6 @@ def main():
     dimensions = len(layout[0]) - 1
     start = data['startingPosition']
     end = data['endingPosition']
-
-    screen = Screen(maze_layout=layout, maze_dimensions=dimensions)
-    screen.create_grid()
 
     # Start and End positions of the maze
     start = Position(x=start[0], y=start[1])
@@ -214,13 +205,11 @@ def main():
         else:
             maze.check_possible_movements()
 
-    # Obtains the path and formats it as a string
-    print()
-    path = maze.get_path()
+    # Obtains the optimal path and formats it as a string
+    optimal_path = maze.get_optimal_path()
     string_path = ""
-    for direction in path:
+    for direction in optimal_path:
         string_path += direction
-    print(f'Path taken: {path}')
     answer = {
         'directions': string_path
     }
@@ -231,5 +220,5 @@ def main():
 
     # Result...
     print(result.content)
-
+'''
 

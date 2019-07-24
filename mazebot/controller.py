@@ -3,10 +3,10 @@ import json
 from tkinter import *
 from copy import deepcopy
 from collections import namedtuple
-from mazebot.simpler_GUI import UserInterface
-from mazebot.model import Maze
+from mazebot.GUI import UserInterface
+from mazebot.model import MazeSolver
 root = Tk()  # FOR SOME REASON THIS HAS TO BE ABOVE IMPORTING VISUALIZATION (CRASHES OTHERWISE)
-from mazebot.view import Visualization
+from .view import Visualization
 
 
 Position = namedtuple('Position', ['x', 'y'])
@@ -37,7 +37,7 @@ def run():
     maze_end = Position(x=end[0], y=end[1])
 
     # Maze Instance to solve the maze
-    maze = Maze(layout=layout, start=maze_start, end=maze_end, dimensions=dimensions)
+    maze = MazeSolver(layout=layout, start=maze_start, end=maze_end, dimensions=dimensions)
 
     # Solves maze and gets the "ideal" path
     success = False
