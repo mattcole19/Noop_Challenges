@@ -5,7 +5,7 @@ from copy import deepcopy
 from collections import namedtuple
 from mazebot.GUI import UserInterface
 from mazebot.model import MazeSolver
-root = Tk()  # FOR SOME REASON THIS HAS TO BE ABOVE IMPORTING VISUALIZATION (CRASHES OTHERWISE)
+#root = Tk()  # FOR SOME REASON THIS HAS TO BE ABOVE IMPORTING VISUALIZATION (CRASHES OTHERWISE)
 from mazebot.view import Visualization
 
 
@@ -15,12 +15,14 @@ Position = namedtuple('Position', ['x', 'y'])
 def run():
 
     # User interface
-    ui = UserInterface(root)
-    root.mainloop()
+    # ui = UserInterface(root)
+    #root.mainloop()
 
     # Request data from API
-    max_size = ui.max_value
-    min_size = ui.min_value
+    #max_size = ui.max_value
+    #min_size = ui.min_value
+    max_size = 20
+    min_size = 20
     geturl = f'https://api.noopschallenge.com/mazebot/random?minSize={str(min_size)}&maxSize={str(max_size)}'
     data = requests.get(url=geturl).json()
 

@@ -17,6 +17,7 @@ class MazeSolver:
         self.optimal_path = []
         self.full_path = []
         self.checkpoint_paths = {self.start: self.optimal_path}
+        self.display_maze()
 
     def check_possible_movements(self):
         """
@@ -119,7 +120,6 @@ class MazeSolver:
         self.layout[self.player_position.y][self.player_position.x] = "P"
 
         # Revert path to last checkpoint's path
-        print(self.checkpoint_paths)
         self.optimal_path = self.checkpoint_paths[last_checkpoint]
 
         # Recheck the possible movements

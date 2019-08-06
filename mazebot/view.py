@@ -1,10 +1,9 @@
 import arcade
-import os
-
+import time
 
 SCREEN_WIDTH = 700
 SCREEN_HEIGHT = 700
-SCREEN_TITLE = "Starting Template"
+SCREEN_TITLE = "MazeBot Solve"
 
 
 class Visualization(arcade.Window):
@@ -36,6 +35,9 @@ class Visualization(arcade.Window):
         arcade.set_background_color(arcade.color.AMAZON)
 
     def setup(self):
+        """
+        Sets up everything that will be drawn
+        """
         # Create your sprites and sprite lists here
         self.player_list = arcade.SpriteList()
         self.wall_list = arcade.SpriteList()
@@ -46,6 +48,8 @@ class Visualization(arcade.Window):
 
         # Initialize player and set it on the start gate
         self.player_sprite = arcade.Sprite(filename='images/player.png')
+        self.player_sprite.width = self.x_change
+        self.player_sprite.height = self.y_change
         self.player_sprite.center_x = self.start_gate.center_x
         self.player_sprite.center_y = self.start_gate.center_y
         self.player_list.append(self.player_sprite)
@@ -75,8 +79,9 @@ class Visualization(arcade.Window):
             self.move_player()
 
     def create_grid(self):
-        """ Creates a list to hold all x, y coordinates for the walls """
-        # TODO: Fix coordinates
+        """
+        Creates a list to hold all x, y coordinates for the walls
+        """
         y = SCREEN_HEIGHT
         for row in self.layout:
             x = 0
@@ -84,30 +89,38 @@ class Visualization(arcade.Window):
 
                 # Place a wall
                 if value == 'X':
-                    wall = arcade.Sprite('images/wall.png', scale=1)
-                    wall.center_x = x
-                    wall.center_y = y
+                    wall = arcade.Sprite('images/wall.png')
+                    wall.width = self.x_change
+                    wall.height = self.y_change
+                    wall.center_x = x + (.5 * wall.width)
+                    wall.center_y = y - (.5 * wall.height)
                     self.wall_list.append(wall)
 
                 # Place the start gate
                 if value == 'A':
                     self.start_gate = arcade.Sprite('images/startGate.png')
-                    self.start_gate.center_x = x
-                    self.start_gate.center_y = y
+                    self.start_gate.width = self.x_change
+                    self.start_gate.height = self.y_change
+                    self.start_gate.center_x = x + (.5 * self.start_gate.width)
+                    self.start_gate.center_y = y - (.5 * self.start_gate.height)
                     self.gates_list.append(self.start_gate)
 
                 # Place the end gate
                 if value == 'B':
                     self.end_gate = arcade.Sprite('images/startGate.png')
-                    self.end_gate.center_x = x
-                    self.end_gate.center_y = y
+                    self.end_gate.width = self.x_change
+                    self.end_gate.height = self.y_change
+                    self.end_gate.center_x = x + (.5 * self.end_gate.width)
+                    self.end_gate.center_y = y - (.5 * self.end_gate.height)
                     self.gates_list.append(self.end_gate)
 
                 x += self.x_change
             y -= self.y_change
 
     def move_player(self):
-        """ Moves the player according to the directions"""
+        """
+        Moves the player according to the directions
+        """
         direction = self.path.pop(0)
 
         # Move player north
@@ -128,6 +141,7 @@ class Visualization(arcade.Window):
 
     @staticmethod
     def run():
+        """
+        Runs the event loop
+        """
         arcade.run()
-
-
