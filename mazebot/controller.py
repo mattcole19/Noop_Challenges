@@ -6,7 +6,7 @@ from collections import namedtuple
 from mazebot.GUI import UserInterface
 from mazebot.model import MazeSolver
 root = Tk()  # FOR SOME REASON THIS HAS TO BE ABOVE IMPORTING VISUALIZATION (CRASHES OTHERWISE)
-from .view import Visualization
+from mazebot.view import Visualization
 
 
 Position = namedtuple('Position', ['x', 'y'])
@@ -17,7 +17,6 @@ def run():
     # User interface
     ui = UserInterface(root)
     root.mainloop()
-    print(ui.min_value)
 
     # Request data from API
     max_size = ui.max_value
@@ -50,7 +49,7 @@ def run():
     # TODO: Possibly remove/change this
     # Obtains the path and formats it as a string
     print()
-    path = maze.get_path()
+    path = maze.get_optimal_path()
     string_path = ""
     for direction in path:
         string_path += direction
@@ -64,10 +63,7 @@ def run():
     result = requests.post(url=post_url, data=json.dumps(answer))
 
     # Result...
-    print(dimensions)
     print(result.content)
-
-
 
     # Screen Instance to show the animation
     visualization = Visualization(layout=layout_copy, dimensions=dimensions, path=path)
@@ -75,10 +71,6 @@ def run():
     visualization.run()
     #screen.on_draw()
 
-
-    # Creates the grid
-
-    # Moves the player on the screen
 
 if __name__ == '__main__':
     run()
